@@ -1,0 +1,9 @@
+FROM python:3.12-slim
+WORKDIR /repo
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY catalog-service ./catalog-service
+COPY assistant-service ./assistant-service
+COPY tests ./tests
+COPY run_tests.py .
+CMD ["python", "run_tests.py"]

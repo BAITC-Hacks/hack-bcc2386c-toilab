@@ -1,0 +1,51 @@
+services:
+  catalog-service:
+    build:
+      context: .
+      dockerfile: catalog-service/Dockerfile
+    ports: ["127.0.0.1:8001:8001"]
+    environment:
+      CATALOG_MODE: ${CATALOG_MODE:-demo}
+      CATALOG_DB: /data/${CATALOG_MODE:-demo}.sqlite
+      PARTNER_API_URL: ${PARTNER_API_URL:-https://ekt.kz/api}
+      PARTNER_API_USER: ${PARTNER_API_USER:-}
+      PARTNER_API_PASSWORD: ${PARTNER_API_PASSWORD:-}
+      INTERNAL_API_TOKEN: ${INTERNAL_API_TOKEN:-}
+      PUBLIC_CATALOG_URL: ${PUBLIC_CATALOG_URL:-http://localhost:8001}
+      SYNC_INTERVAL: ${SYNC_INTERVAL:-300}
+    volumes: ["catalog-data:/data"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health', timeout=3)"]
+      interval: 10s
+      timeout: 4s
+      retries: 3
+  assistant-service:
+    build:
+      context: .
+      dockerfile: assistant-service/Dockerfile
+    ports: ["127.0.0.1:8002:8002"]
+    environment:
+      CATALOG_SERVICE_URL: http://catalog-service:8001
+      INTERNAL_API_TOKEN: ${INTERNAL_API_TOKEN:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.openai.com/v1}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4.1-mini}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+    depends_on:
+      catalog-service:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/health', timeout=4)"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  chat-widget:
+    build:
+      context: .
+      dockerfile: chat-widget/Dockerfile
+    ports: ["127.0.0.1:3000:3000"]
+    environment:
+      WIDGET_HOST: 0.0.0.0
+      ASSISTANT_SERVICE_URL: ${ASSISTANT_SERVICE_URL:-http://localhost:8002}
+volumes:
+  catalog-data:

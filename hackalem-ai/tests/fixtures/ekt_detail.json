@@ -1,0 +1,74 @@
+{
+  "id": 515291,
+  "name": "027228 АВ DRX250 MT 3ф 160А 18ka Legrand (1)",
+  "article": "200300285_",
+  "price": 64920,
+  "image": "https://ekt.kz/upload/iblock/47e/yow62nu665xqw3kk1es94ktbpl2z8pkt/027228_av_drx250_mt_3f_160a_18ka_legrand_1.jpg",
+  "url": "https://ekt.kz/catalog/nizkovoltnaya_apparatura/silovye_avtomaticheskie_vyklyuchateli/drx250_mt_10_250_a_legrand/027228_av_drx250_mt_3f_160a_18ka_legrand_1/",
+  "url_api_detail": "https://ekt.kz/api/products/detail?id=515291",
+  "offers": [],
+  "quantity": 23,
+  "description": "Номинальный ток: 160А. Количество полюсов: 3. Отключающая способность: 18kA.",
+  "stores": [
+    {
+      "id": 3,
+      "name": "Шымкент (ул.Байдукова)",
+      "quantity": 2
+    },
+    {
+      "id": 13,
+      "name": "Алматы",
+      "quantity": 5
+    },
+    {
+      "id": 19,
+      "name": "Тараз",
+      "quantity": 2
+    },
+    {
+      "id": 20,
+      "name": "Атырау",
+      "quantity": 3
+    },
+    {
+      "id": 21,
+      "name": "Караганда",
+      "quantity": 2
+    },
+    {
+      "id": 24,
+      "name": "Нур-Султан",
+      "quantity": 8
+    },
+    {
+      "id": 25,
+      "name": "Шымкент (Тассай)",
+      "quantity": 1
+    }
+  ],
+  "properties": {
+    "BRAND_PRIORITY": "1",
+    "CML2_ARTICLE": "200300285_",
+    "RECOMMEND": [
+      "48783",
+      "23466",
+      "28727"
+    ],
+    "CML2_BAR_CODE": "3414970344526",
+    "CML2_TRAITS": [
+      "Готовая продукция",
+      "Товар"
+    ],
+    "CML2_TAXES": "16",
+    "KRATNOST_MIN": "1",
+    "IMYAKARTINKI": "Legrand.jpg",
+    "ARTIKULPOSTAVSHCHIKA": "027228",
+    "OBYEM": "Автоматический выключатель",
+    "KOLICHESTVO_POLYUSOV": "3",
+    "NOMINALNAYA_OTKLYUCHAYUSHCHAYA_SPOSOBNOST": "18кА",
+    "NOMINALNOE_NAPRYAZHENIE": "400В",
+    "NOMINALNYY_TOK": "250 А",
+    "TIP_USTANOVKI": "Винтовое",
+    "TORGOVAYA_MARKA": "Legrand"
+  }
+}
