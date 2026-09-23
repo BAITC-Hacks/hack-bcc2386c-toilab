@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HackAlem AI — схема проекта</title>
+<style>
+  :root{
+    --bg:#0F1720; --panel:#16212C; --line:#2A3A48;
+    --amber:#C98A3E; --teal:#4FA8A0;
+    --text:#E8E6DF; --muted:#8B97A3;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif;
+    line-height:1.55;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:48px 24px 96px;}
+  h1{
+    font-size:1.9rem; margin:0 0 4px; font-weight:600; letter-spacing:.2px;
+  }
+  .kicker{color:var(--amber); font-size:.95rem; margin:0 0 32px;}
+  h2{
+    font-size:1.15rem; margin:48px 0 12px; padding-bottom:8px;
+    border-bottom:1px solid var(--line); color:var(--text);
+  }
+  p{color:var(--text); max-width:66ch;}
+  .muted{color:var(--muted);}
+  code, .path{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.85em; color:var(--teal); background:rgba(79,168,160,.08);
+    padding:1px 5px; border-radius:3px;
+  }
+
+  /* schematic diagram */
+  .diagram{
+    background:var(--panel); border:1px solid var(--line); border-radius:6px;
+    padding:28px 20px; margin:20px 0 8px; overflow-x:auto;
+  }
+  .row{display:flex; align-items:center; gap:10px; min-width:600px;}
+  .box{
+    flex:1; border:1px solid var(--line); border-radius:4px; padding:12px 14px;
+    background:var(--bg);
+  }
+  .box b{display:block; font-size:.95rem; color:var(--text);}
+  .box span{font-size:.78rem; color:var(--muted);}
+  .wire{flex:0 0 34px; height:2px; background:var(--line); position:relative;}
+  .wire::after{
+    content:""; position:absolute; right:0; top:-4px;
+    border:5px solid transparent; border-left-color:var(--line);
+  }
+  .wire.data::before{content:"HTTP"; position:absolute; top:-18px; left:50%; transform:translateX(-50%); font-size:.65rem; color:var(--teal); letter-spacing:.3px;}
+  .row + .row{margin-top:18px;}
+  .aside{
+    margin-top:18px; padding-top:14px; border-top:1px dashed var(--line);
+    font-size:.85rem; color:var(--muted);
+  }
+
+  table{width:100%; border-collapse:collapse; margin:12px 0 4px; font-size:.92rem;}
+  th, td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line);}
+  th{color:var(--amber); font-weight:600; font-size:.8rem;}
+  td.route{color:var(--teal); font-family:ui-monospace,monospace; font-size:.85em;}
+
+  ul.files{list-style:none; margin:8px 0; padding:0;}
+  ul.files li{padding:6px 0 6px 16px; border-left:2px solid var(--line); margin-bottom:2px;}
+
+  .modes{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:12px;}
+  @media (max-width:640px){.modes{grid-template-columns:1fr;} .row{min-width:0; flex-wrap:wrap;} .wire{display:none;}}
+  .mode{background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:16px 18px;}
+  .mode h3{margin:0 0 6px; font-size:1rem; color:var(--text);}
+  .mode p{font-size:.88rem; color:var(--muted); margin:0;}
+
+  footer{margin-top:56px; padding-top:16px; border-top:1px solid var(--line); font-size:.8rem; color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>HackAlem AI</h1>
+  <p class="kicker">Внутренняя схема проекта — три сервиса, один локальный чат.</p>
+
+  <p>Прототип-консультант поверх каталога ekt.kz. Работает как три независимых
+  HTTP-сервиса на loopback-адресах; браузер видит только виджет чата.</p>
+
+  <h2>Схема сервисов</h2>
+  <div class="diagram">
+    <div class="row">
+      <div class="box"><b>Widget · :3000</b><span>браузер, POST /assistant/message</span></div>
+      <div class="wire data"></div>
+      <div class="box"><b>Assistant · :8002</b><span>tool loop, LLM, подтверждение</span></div>
+      <div class="wire data"></div>
+      <div class="box"><b>Catalog · :8001</b><span>SQLite, поиск, корзина</span></div>
+    </div>
+    <div class="aside">Catalog синхронизируется с API партнёра (Basic Auth) только в режиме <code>live</code>. Открытие корзины — обычная ссылка на HTML-страницу Catalog, минуя Assistant.</div>
+  </div>
+
+  <h2>Что где лежит</h2>
+  <ul class="files">
+    <li><span class="path">catalog-service/catalog/</span> — <code>api.py</code> маршруты, <code>services.py</code> правила, <code>data.py</code> SQLite, <code>adapter.py</code> поля партнёра, <code>sync.py</code> пагинация и снапшоты.</li>
+    <li><span class="path">assistant-service/assistant/</span> — <code>service.py</code> ограниченный tool loop и <code>may_execute</code>, <code>llm.py</code> вызов модели, <code>catalog_client.py</code> HTTP-клиент.</li>
+    <li><span class="path">chat-widget/public/</span> — интерфейс. Делает только один запрос: <code>POST /assistant/message</code>.</li>
+    <li><span class="path">tests/</span> — модульные и контрактные тесты, запуск через <code>run_tests.py</code>.</li>
+  </ul>
+
+  <h2>Контракты API</h2>
+  <table>
+    <tr><th>Сервис</th><th>Маршрут</th><th>Результат</th></tr>
+    <tr><td>Catalog</td><td class="route">GET /health</td><td>status, last_sync</td></tr>
+    <tr><td>Catalog</td><td class="route">GET /catalog/search</td><td>items</td></tr>
+    <tr><td>Catalog</td><td class="route">POST /cart/add</td><td>success + cart</td></tr>
+    <tr><td>Assistant</td><td class="route">GET /health</td><td>catalog_service_reachable</td></tr>
+    <tr><td>Assistant</td><td class="route">POST /assistant/message</td><td>reply_text, proposed_action</td></tr>
+  </table>
+  <p class="muted" style="font-size:.85rem;">Полная таблица и JSON Schema — в <code>README.md</code>. Swagger локально: <code>:8001/docs</code>, <code>:8002/docs</code>.</p>
+
+  <h2>Как запускать</h2>
+  <div class="modes">
+    <div class="mode">
+      <h3>Демо</h3>
+      <p><code>START_LOCAL_AI.cmd</code> — синтетический каталог, локальная модель <code>qwen3:4b</code> через Ollama, ключ не нужен.</p>
+    </div>
+    <div class="mode">
+      <h3>Live</h3>
+      <p><code>START_EKT.cmd</code> — реальные товары ekt.kz, пароль запрашивается в терминале и нигде не сохраняется.</p>
+    </div>
+  </div>
+
+  <footer>
+    Подробности, ограничения и сценарий проверки — в <code>README.md</code> и <code>VERIFICATION.md</code> в корне проекта.
+  </footer>
+
+</div>
+</body>
+</html>
