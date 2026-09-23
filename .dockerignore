@@ -1,0 +1,10 @@
+.git
+.env
+**/.env
+**/__pycache__
+**/.pytest_cache
+**/data
+**/*.sqlite*
+.venv
+dist
+.sites-runtime
